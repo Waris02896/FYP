@@ -8,13 +8,14 @@ exports.login = async (req, res) => {
 
     db.query('SELECT user_id, firstname, lastname, password, email, phone, verified, pic FROM users where email = ?', [user.email], async (error, result) => {
         if (error) {
-            return res.status(400).json({
+            return res.status(error.status).json({
                 data: {
                     data: {
 
                     },
                     error: {
                         error,
+                        status: error.status || 500,
                         message: "Connection failed please try again"
                     }
                 }
