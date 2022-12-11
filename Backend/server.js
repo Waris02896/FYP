@@ -34,6 +34,6 @@ app.use('/fyp',
 
 
 app.listen(process.env.PORT, () => {
-    console.log('server started')
+    console.log(`Server started on port ${process.env.PORT}`);
 })
 
