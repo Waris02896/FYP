@@ -31,6 +31,12 @@ app.use('/fyp',
     project
 )
 
+app.use('/ffyp',
+    register,
+    task,
+    project
+)
+
 
 
 app.listen(process.env.PORT, () => {

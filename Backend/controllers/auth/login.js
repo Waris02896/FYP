@@ -1,6 +1,7 @@
 let user = require('../../data/models/Auth/users');
 const bcrypt = require('bcryptjs');
 const db = require('../../utils/database_connection');
+const { jwtToken } = require('../../middlewares/jsonwebtoken');
 
 exports.login = async (req, res) => {
 
@@ -8,7 +9,7 @@ exports.login = async (req, res) => {
 
     db.query('SELECT user_id, firstname, lastname, password, email, phone, verified, pic FROM users where email = ?', [user.email], async (error, result) => {
         if (error) {
-            return res.status(error.status).json({
+            return res.status(error.status || 500).json({
                 data: {
                     data: {
 
@@ -21,24 +22,48 @@ exports.login = async (req, res) => {
                 }
             });
         } else if (result.length > 0) {
-            console.log(result[0].password);
             if (await bcrypt.compare(user.password, result[0].password)) {
                 if (result[0].verified == 1) {
-                    return res.status(200).json({
-                        data: {
+
+                    let _user = result[0];
+                    try {
+                        _user.token = await jwtToken({
+                            userid: _user.user_id
+                        });
+                        return res.status(200).json({
                             data: {
-                                user: {
-                                    user_id: result[0].user_id,
-                                    firstname: result[0].firstname,
-                                    lastname: result[0].lastname,
-                                    email: user.email,
-                                    phone: result[0].phone,
-                                    verified: true,
-                                    pic: result[0].pic
+                                data: {
+                                    user: {
+                                        user_id: _user.user_id,
+                                        firstname: _user.firstname,
+                                        lastname: _user.lastname,
+                                        email: user.email,
+                                        phone: _user.phone,
+                                        verified: true,
+                                        pic: _user.pic,
+                                        token: _user.token
+                                    },
+                                    message: "User login Successfully!"
                                 }
                             }
-                        }
-                    });
+                        });
+                    } catch (_error) {
+                        return res.status(_error.status || 500).json({
+                            data: {
+                                data: {
+
+                                },
+                                error: {
+                                    Error: _error.message,
+                                    code: _error.code,
+                                    status: _error.status || 500,
+                                    message: "User login failed!"
+                                }
+                            }
+                        })
+                    }
+
+
                 } else if (result[0].verified == 0) {
                     return res.status(401).json({
                         data: {
