@@ -45,8 +45,32 @@ const registerUser = joi.object({
     ]
 });
 
+const email = joi.object({
+    email: joi
+        .string()
+        .email()
+        .required(),
+    id: joi.string()
+});
+
+const loginUser = joi.object({
+    user_id: [
+        joi.string(),
+        joi.number(),
+        joi.symbol(),
+        joi.required()
+    ],
+    password: joi
+        .string()
+        .min(8)
+        .max(24)
+        .required()
+})
+
 
 
 module.exports = {
-    registerUser
+    registerUser,
+    email,
+    loginUser
 }

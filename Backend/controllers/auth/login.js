@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
                                         lastname: _user.lastname,
                                         email: user.email,
                                         phone: _user.phone,
-                                        verified: true,
+                                        verified: Boolean(result[0].verified),
                                         pic: _user.pic,
                                         token: _user.token
                                     },
@@ -74,7 +74,7 @@ exports.login = async (req, res) => {
                                     lastname: result[0].lastname,
                                     email: user.email,
                                     phone: result[0].phone,
-                                    verified: false,
+                                    verified: Boolean(result[0].verified),
                                     pic: result[0].pic
                                 },
                             },

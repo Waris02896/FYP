@@ -27,7 +27,6 @@ exports.jwtToken = (Option) => {
 
 exports.verifyAccessToken = (req, res, next) => {
     if (!req.headers['authorization']) {
-        console.log("I am Ali")
         return res.status(createError.Unauthorized().statusCode).json({
             data: {
                 data: {
@@ -58,7 +57,8 @@ exports.verifyAccessToken = (req, res, next) => {
                 });
             } else if (result) {
                 const _token = JWT.verify(token, process.env.SESSION_SECRET);
-                next(_token.aud);
+                req.token = _token;
+                next();
             }
         });
     }
