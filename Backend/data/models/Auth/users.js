@@ -28,7 +28,6 @@ const registerUser = joi.object({
         .required(),
     password: joi
         .string()
-        .alphanum()
         .min(8)
         .max(24)
         .required(),

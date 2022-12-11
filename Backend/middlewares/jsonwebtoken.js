@@ -1,4 +1,5 @@
 const JWT = require('jsonwebtoken');
+const createError = require('http-errors');
 
 exports.jwtToken = (Option) => {
     return new Promise((resolve, reject) => {
@@ -7,7 +8,7 @@ exports.jwtToken = (Option) => {
         const secret = process.env.SESSION_SECRET;
 
         let options = {
-            expiresIn: "6h",
+            expiresIn: "1s",
             issuer: process.env.BASEURL,
             audience: Option.userid
         }
@@ -22,5 +23,44 @@ exports.jwtToken = (Option) => {
         })
 
     });
+}
+
+exports.verifyAccessToken = (req, res, next) => {
+    if (!req.headers['authorization']) {
+        console.log("I am Ali")
+        return res.status(createError.Unauthorized().statusCode).json({
+            data: {
+                data: {
+
+                },
+                error: {
+                    status: createError.Unauthorized().statusCode,
+                    message: createError.Unauthorized("User not authorized")
+                }
+            }
+        });
+    } else if (req.headers['authorization']) {
+        const authHeader = req.headers['authorization'];
+        const baererToken = authHeader.split(' ');
+        const token = baererToken[1];
+        JWT.verify(token, process.env.SESSION_SECRET, (err, result) => {
+            if (err) {
+                return res.status(err.status || createError.Unauthorized().statusCode).json({
+                    data: {
+                        data: {
+
+                        },
+                        error: {
+                            status: err.status || createError.Unauthorized().statusCode,
+                            message: createError.Unauthorized("User not authorized")
+                        }
+                    }
+                });
+            } else if (result) {
+                const _token = JWT.verify(token, process.env.SESSION_SECRET);
+                next(_token.aud);
+            }
+        });
+    }
 }
 

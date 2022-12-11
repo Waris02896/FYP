@@ -44,11 +44,6 @@ exports.signup = async (req, res) => {
                         user.user_id = `${user.firstname.substring(0, 3)}-${user.lastname.substring(0, 3)}-${num.toString().padStart(8, '0')}`;
                         user.verified = 0;
 
-
-
-                        let password = await bcrypt.hashSync(user.password, await bcrypt.genSaltSync(parseInt(process.env.SALT)));
-                        user.password = password;
-
                         try {
                             const _result = await registerUser.validateAsync(user)
                         } catch (error) {
@@ -64,6 +59,8 @@ exports.signup = async (req, res) => {
                             })
                         }
 
+                        let password = await bcrypt.hashSync(user.password, await bcrypt.genSaltSync(parseInt(process.env.SALT)));
+                        user.password = password;
 
                         db.query('INSERT INTO users SET ?', {
                             user_id: user.user_id,
