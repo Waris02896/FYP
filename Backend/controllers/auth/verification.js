@@ -1,4 +1,8 @@
 const db = require("../../utils/database_connection");
+const { email } = require("../../data/models/Auth/users");
+const { _sendMail } = require("../../utils/send_email");
+const mail = require("../../data/models/Auth/mail");
+const err = require('http-errors');
 
 exports.verifyemail = (req, res) => {
     const id = req.query.id;
@@ -69,6 +73,73 @@ exports.verifyemail = (req, res) => {
                             }
                         }
                     })
+                }
+            })
+        }
+    })
+}
+
+exports.resendMail = async (req, res) => {
+    let _email = req.body;
+
+    try {
+        const _result = await email.validateAsync(_email)
+    } catch (error) {
+        console.log(error)
+        return res.status(error.status || 500).json({
+            data: {
+                data: {
+
+                },
+                error: {
+                    message: "Email format is not valid",
+                }
+            }
+        })
+    }
+
+    db.query('SELECT * FROM users WHERE email = ?', [_email.email], async (error, result) => {
+        if (error) {
+            return res.status(error.status || 500).json({
+                data: {
+                    data: {
+
+                    }
+                },
+                error: {
+                    error
+                }
+            })
+        } else if (result.length > 0) {
+            let user = result[0];
+            user.verified = Boolean(user.verified);
+            mail.to = user.email;
+            mail.subject = "Verification for FYP Management System";
+            mail.body = `${process.env.BASEURL}/verifyaccount?id=${user.user_id}`;
+            _sendMail(mail);
+            return res.status(200).json({
+                data: {
+                    data: {
+                        user: {
+                            user_id: user.user_id,
+                            firstname: user.firstname,
+                            lastname: user.lastname,
+                            email: user.email,
+                            phone: user.phone,
+                            verified: user.verified,
+                            pic: user.pic
+                        },
+                        message: "Verification mail sent to your email address"
+                    }
+                }
+            })
+        } else if (result.length <= 0) {
+            return res.status(200).json({
+                data: {
+                    data: {
+
+                    },
+                    message: `No user with ${_email.email}`
                 }
             })
         }

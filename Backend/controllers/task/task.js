@@ -1,6 +1,6 @@
 const db = require("../../utils/database_connection")
 
-exports.getTaskCategories = (req, res) => {
+exports.getTaskCategories = async (req, res, next) => {
     db.query("SELECT * FROM taskCategories", async (error, result) => {
         if (error) {
             return res.json({

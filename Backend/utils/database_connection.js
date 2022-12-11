@@ -11,7 +11,7 @@ if (process.env.DB_TYPE == "mysql") {
     user: process.env.DATABASE_USER,
     database: process.env.DATABASE,
     password: process.env.DATABASE_PASSWORD,
-    port: process.env.DB_PORTn,
+    port: process.env.DB_PORT,
     waitForConnections: true,
 
   });

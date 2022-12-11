@@ -15,7 +15,7 @@ async function _sendMail(option) {
     var trans = transport.createTransport(transportHost);
 
     let mailOptions = {
-        from: option.from,
+        from: process.env.EMAIL,
         to: option.to,
         subject: option.subject,
         text: option.body
