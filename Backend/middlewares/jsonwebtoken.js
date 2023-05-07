@@ -8,7 +8,7 @@ exports.jwtToken = (Option) => {
         const secret = process.env.SESSION_SECRET;
 
         let options = {
-            expiresIn: "1s",
+            expiresIn: "6h",
             issuer: process.env.BASEURL,
             audience: Option.userid
         }
@@ -47,9 +47,9 @@ exports.verifyAccessToken = (req, res, next) => {
                 return res.status(err.status || createError.Unauthorized().statusCode).json({
                     data: {
                         data: {
-
                         },
                         error: {
+                            err,
                             status: err.status || createError.Unauthorized().statusCode,
                             message: createError.Unauthorized("User not authorized")
                         }

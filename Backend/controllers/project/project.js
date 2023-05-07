@@ -2,8 +2,6 @@ let project = require('../../data/models/project/project');
 const db = require('../../utils/database_connection');
 
 exports.projectlist = async (req, res) => {
-
-
     db.query('SELECT id, name, duration, sprints, currentSprint, roles, startDate, endDate, icon FROM project ', async (error, result) => {
         if (error) {
             return res.status(400).json({

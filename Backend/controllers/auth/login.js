@@ -7,6 +7,8 @@ exports.login = async (req, res) => {
 
     user = req.body;
 
+
+
     db.query('SELECT user_id, firstname, lastname, password, email, phone, verified, pic FROM users where email = ?', [user.email], async (error, result) => {
         if (error) {
             return res.status(error.status || 500).json({

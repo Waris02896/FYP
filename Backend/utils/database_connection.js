@@ -13,7 +13,6 @@ if (process.env.DB_TYPE == "mysql") {
     password: process.env.DATABASE_PASSWORD,
     port: process.env.DB_PORT,
     waitForConnections: true,
-
   });
 } else if (process.env.DB_TYPE == "mysql2") {
   db = mysql2.createPool({
